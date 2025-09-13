@@ -51,10 +51,13 @@ class Actor(nn.Module):
     
     def __init__(self, input_size = 24, output_size = 2, hidden_sizes = [400, 300]):
           """
-        input_size: the dimension of the state vector of a single agent
-        output_size: the dimension of the action vector of a single agent
-        hidden_sizes: the sizes of the input and output units of the hidden layer
-        for example, hidden_sizes = [400, 300] means the hidden layer has input_size = 400, and output_size = 300
+          Initialize parameters and build model.
+          Params
+          ======
+          input_size: the dimension of the state vector of a single agent
+          output_size: the dimension of the action vector of a single agent
+          hidden_sizes: the sizes of the input and output units of the hidden layer
+          for example, hidden_sizes = [400, 300] means the hidden layer has input_size = 400, and output_size = 300
           """
           
 
