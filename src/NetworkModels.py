@@ -59,8 +59,6 @@ class Actor(nn.Module):
           hidden_sizes: the sizes of the input and output units of the hidden layer
           for example, hidden_sizes = [400, 300] means the hidden layer has input_size = 400, and output_size = 300
           """
-          
-
           super(Actor, self).__init__()
           self.hidden_layers = nn.ModuleList([])
           self.hidden_layers.append(nn.Linear(input_size, hidden_sizes[0])) 
@@ -78,11 +76,11 @@ class Actor(nn.Module):
         for layer in self.hidden_layers:
             layer.weight.data.uniform_(*hidden_init(layer))
             layer.bias.data.fill_(0.1)
+
         self.output_layer.weight.data.uniform_(-3e-3, 3e-3)
         self.output_layer.bias.data.fill_(0.1)
     
     def forward(self, state):
-
         for layer in self.hidden_layers:
             x = F.relu(layer(state))
         return F.tanh(self.output_layer(x))
