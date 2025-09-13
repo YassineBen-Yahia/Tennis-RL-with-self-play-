@@ -33,12 +33,53 @@ class Critic(nn.Module):
         self.fcs1.weight.data.uniform_(*hidden_init(self.fcs1))
         self.fc2.weight.data.uniform_(*hidden_init(self.fc2))
         self.fc3.weight.data.uniform_(-3e-3, 3e-3)
-    
+
+        self.fcs1.bias.data.fill_(0.1)
+        self.fc2.bias.data.fill_(0.1)
+        self.fc3.bias.data.fill_(0.1)
+
     def forward(self, state, action):
-        """
-        Build a network that maps (state, action) pairs -> Q-values.
-        """
+        
         xs = F.relu(self.fcs1(state))
         x = torch.cat((xs, action), dim=1)
         x = F.relu(self.fc2(x))
         return self.fc3(x)
+
+
+
+class Actor(nn.Module):
+    
+    def __init__(self, input_size = 24, output_size = 2, hidden_sizes = [400, 300]):
+          """
+        input_size: the dimension of the state vector of a single agent
+        output_size: the dimension of the action vector of a single agent
+        hidden_sizes: the sizes of the input and output units of the hidden layer
+        for example, hidden_sizes = [400, 300] means the hidden layer has input_size = 400, and output_size = 300
+          """
+          
+
+          super(Actor, self).__init__()
+          self.hidden_layers = nn.ModuleList([])
+          self.hidden_layers.append(nn.Linear(input_size, hidden_sizes[0])) 
+
+          for h1, h2 in zip(hidden_sizes[:-1], hidden_sizes[1:]): # from the sencond layer to the (last-1) layer
+              self.hidden_layers.append(nn.Linear(h1, h2))
+            
+          self.output_layer = nn.Linear(hidden_sizes[-1], output_size) 
+
+          self.reset_parameters()
+
+       
+
+    def reset_parameters(self):
+        for layer in self.hidden_layers:
+            layer.weight.data.uniform_(*hidden_init(layer))
+            layer.bias.data.fill_(0.1)
+        self.output_layer.weight.data.uniform_(-3e-3, 3e-3)
+        self.output_layer.bias.data.fill_(0.1)
+    
+    def forward(self, state):
+
+        for layer in self.hidden_layers:
+            x = F.relu(layer(state))
+        return F.tanh(self.output_layer(x))
